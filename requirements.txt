@@ -1,0 +1,6 @@
+pylint
+PyOpenGL
+PyOpenGL-accelerate
+PyOpenGL-Demo
+PyQt6
+numpy
