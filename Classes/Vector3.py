@@ -2,9 +2,9 @@ import math
 
 class Vector3():
     def __init__(self, x, y, z):
-        self.x=x
-        self.y=y
-        self.z=z
+        self.x=float(x)
+        self.y=float(y)
+        self.z=float(z)
 
     def sum(self, x, y, z):
         self.x+=x
