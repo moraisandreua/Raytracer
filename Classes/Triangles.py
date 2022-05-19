@@ -1,2 +1,4 @@
 class Triangles():
-    pass
+    def __init__(self, transformation, triangles):
+        self.transformation=transformation
+        self.triangles=triangles

@@ -1,13 +1,15 @@
 import sys
+from Parcing import Parcing
 
 import math
+from tracemalloc import start
 import numpy as np
 from OpenGL import GL
 import OpenGL.GLU as GLU
 
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtOpenGL import QOpenGLWindow
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QSlider, QLabel
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QSlider, QLabel, QFileDialog
 from PyQt6.QtOpenGLWidgets import QOpenGLWidget
 from PyQt6 import QtGui
 
@@ -18,6 +20,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.recursionLevel=1
+        self.parser=None
 
         self.setWindowTitle("COSIG Ray Tracer")
         self.setFixedSize(QSize(800, 700))
@@ -57,10 +60,18 @@ class MainWindow(QMainWindow):
         self.labelSliderValue.setText("Recursion level: " + str(value))
 
     def loadFile(self):
-        print("load button clicked")
+        path = QFileDialog.getOpenFileName(self, 'Open a file', '', 'Text Files (*.txt)')
+
+        if path != ('', ''):
+            self.parse(path[0])
 
     def startRaytracing(self):
         print("start button clicked")
+
+    def parse(self, filename):
+        self.parser=Parcing(filename)
+        self.parser.parse()
+
 
 class GLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
@@ -68,7 +79,6 @@ class GLWidget(QOpenGLWidget):
         QOpenGLWidget.__init__(self, parent)
 
     def initializeGL(self):
-        
         #self.qglClearColor(QtGui.QColor(0, 0, 255))    # initialize the screen to blue
         GL.glClearColor(0, 0, 255, 0.5) # azul com transparencia
         GL.glEnable(GL.GL_DEPTH_TEST)
