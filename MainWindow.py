@@ -1,4 +1,6 @@
 import sys
+from Classes.Vector3 import Vector3
+from Classes.Ray import Ray
 from Parcing import Parcing
 
 import math
@@ -24,6 +26,10 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("COSIG Ray Tracer")
         self.setFixedSize(QSize(800, 700))
+
+        self.imageHeight=0
+        self.imageWidth=0
+        self.pixelScale=0
         
         layoutVertical = QVBoxLayout()
         opengl_window = GLWidget()
@@ -71,6 +77,32 @@ class MainWindow(QMainWindow):
     def parse(self, filename):
         self.parser=Parcing(filename)
         self.parser.parse()
+
+        self.imageHeight = 2 * self.parser.camera.distance * math.tan(self.parser.camera.fov() / 2)
+        self.imageWidth = self.imageHeight * self.parser.images[0].width / self.parser.images[0].height
+        self.pixelScale = self.imageHeight / self.parser.images[0].height
+
+    def traceRays(self):
+        origin=Vector3(0,0,self.parser.camera.distance)
+
+        for j in range(0, self.parser.images[0].height):
+            for i in range(0, self.parser.images[0].width):
+                # calcular as coordenadas P.x, P.y e P.z do centro do píxel[i][j]
+                pX = (i + 0.5) * self.pixelScale - self.parser.images[0].width / 2
+                pY = -(j + 0.5) * self.pixelScale + self.parser.images[0].height / 2
+                pZ = 0
+
+                # calcular a direção do vetor que define a direção do raio
+                direction = Vector3(pX-0, pY-0, pZ-self.parser.camera.distance); # ou seja, direction = new Vector3(P.x, P.y, -distance);
+                directionNormalized=direction.normal()
+
+                # criar ray
+                ray = Ray(origin, direction)
+                rec=2 # recursividade
+                color = self.traceRay(ray, rec); 
+
+    def traceRay(self, ray, rec):
+        pass
 
 
 class GLWidget(QOpenGLWidget):

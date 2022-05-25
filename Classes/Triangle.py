@@ -11,7 +11,7 @@ class Triangle():
     def normal(self):
         A=self.vertexB
         B=self.vertexC
-        A.sub(self.vertexA.x, self.vertexA.y, self.vertexA.z)
+        A.sub(self.vertexA.x, self.vertexA.y, self.vertexA.z) # 
         B.sub(self.vertexA.x, self.vertexA.y, self.vertexA.z)
 
         newX=((A.y * B.z) - (A.z * B.y))

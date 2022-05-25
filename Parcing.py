@@ -47,7 +47,7 @@ class Parcing():
 
     def parseObject(self, prefix, properties):
         if prefix == "mage":
-            self.images.append(Image(properties.split("\r\n")[0].split(" ")[0], properties.split("\r\n")[0].split(" ")[1], Color3(
+            self.images.append(Image(float(properties.split("\r\n")[0].split(" ")[0]), float(properties.split("\r\n")[0].split(" ")[1]), Color3(
                 properties.split("\r\n")[1].split(" ")[0], properties.split("\r\n")[1].split(" ")[1], properties.split("\r\n")[1].split(" ")[2])))
 
         if prefix == "Box":
@@ -56,7 +56,7 @@ class Parcing():
 
         if prefix == "Camera":
             self.camera = Camera(self.transformations[int(properties.split(
-                "\r\n")[0])], properties.split("\r\n")[1], properties.split("\r\n")[2])
+                "\r\n")[0])], float(properties.split("\r\n")[1]), float(properties.split("\r\n")[2]))
 
         if prefix == "Light":
             self.lights.append(Light(self.transformations[int(properties.split("\r\n")[0])], Color3(properties.split("\r\n")[
