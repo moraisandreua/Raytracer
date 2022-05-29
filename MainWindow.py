@@ -1,7 +1,10 @@
+from array import array
 import sys
+from Classes.Color3 import Color3
 from Classes.Vector3 import Vector3
 from Classes.Ray import Ray
 from Parcing import Parcing
+import random
 
 import math
 from tracemalloc import start
@@ -9,7 +12,7 @@ import numpy as np
 from OpenGL import GL
 import OpenGL.GLU as GLU
 
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import QSize, Qt, pyqtSignal
 from PyQt6.QtOpenGL import QOpenGLWindow
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QSlider, QLabel, QFileDialog
 from PyQt6.QtOpenGLWidgets import QOpenGLWidget
@@ -30,9 +33,11 @@ class MainWindow(QMainWindow):
         self.imageHeight=0
         self.imageWidth=0
         self.pixelScale=0
+        self.pixels=[]
         
         layoutVertical = QVBoxLayout()
-        opengl_window = GLWidget()
+        self.opengl_window = GLWidget()
+        
         
         layoutHorizontal = QHBoxLayout()
         loadButton = QPushButton("Load")
@@ -52,13 +57,15 @@ class MainWindow(QMainWindow):
         layoutHorizontal.addWidget(startButton)
         layoutHorizontal.addLayout(sliderLabelLayoutHorizontal)
         
-        layoutVertical.addWidget(opengl_window)
+        layoutVertical.addWidget(self.opengl_window)
         layoutVertical.addLayout(layoutHorizontal)
 
         # Set the central widget of the Window.
         widget = QWidget()
         widget.setLayout(layoutVertical)
         self.setCentralWidget(widget)
+
+        
 
     def sliderValueChanged(self):
         value = math.floor(self.slider.value()/20)+1 # limita entre 1 e 5
@@ -73,6 +80,7 @@ class MainWindow(QMainWindow):
 
     def startRaytracing(self):
         print("start button clicked")
+        self.showFinalImage()
 
     def parse(self, filename):
         self.parser=Parcing(filename)
@@ -82,14 +90,32 @@ class MainWindow(QMainWindow):
         self.imageWidth = self.imageHeight * self.parser.images[0].width / self.parser.images[0].height
         self.pixelScale = self.imageHeight / self.parser.images[0].height
 
+        # criar matriz de pixeis
+        # para poder adicionar o objecto Color3 a uma dada posição da matrix
+        # matrix deve ter o comprimento e a altura da imagem
+        self.generatePixelMatrix()
+
+        # self explanatory
+        self.traceRays()
+
+    def generatePixelMatrix(self):
+        for y in range(0, int(self.parser.images[0].height)):
+            newRow=[]
+            for x in range(0, int(self.parser.images[0].width)):
+                newRow.append(0)
+            self.pixels.append(newRow)
+
+
     def traceRays(self):
         origin=Vector3(0,0,self.parser.camera.distance)
 
-        for j in range(0, self.parser.images[0].height):
-            for i in range(0, self.parser.images[0].width):
+        # percorre as linhas (y)
+        for j in range(0, int(self.parser.images[0].height)):
+            # percorre as colunas (x)
+            for i in range(0, int(self.parser.images[0].width)):
                 # calcular as coordenadas P.x, P.y e P.z do centro do píxel[i][j]
-                pX = (i + 0.5) * self.pixelScale - self.parser.images[0].width / 2
-                pY = -(j + 0.5) * self.pixelScale + self.parser.images[0].height / 2
+                pX = (i + 0.5) * self.pixelScale - self.imageWidth / 2
+                pY = -(j + 0.5) * self.pixelScale + self.imageHeight / 2
                 pZ = 0
 
                 # calcular a direção do vetor que define a direção do raio
@@ -97,18 +123,35 @@ class MainWindow(QMainWindow):
                 directionNormalized=direction.normal()
 
                 # criar ray
-                ray = Ray(origin, direction)
+                ray = Ray(origin, directionNormalized)
                 rec=2 # recursividade
                 color = self.traceRay(ray, rec); 
+                color.checkRange() #ajustar a cor
+
+                # converter para 32bit
+                self.pixels[i][j] = Color3(int(255.0 * color.r), int(255.0 * color.g), int(255.0 * color.b))
+
 
     def traceRay(self, ray, rec):
-        pass
+        return Color3(0.4,0.5,0.6)
+
+    def showFinalImage(self):
+        arrayOfArrays=[ [x.r, x.g, x.b] for y in self.pixels for x in y ]
+        matrixDecomposition = [item for sublist in arrayOfArrays for item in sublist]
+        print("will now paint the pixels")
+        self.opengl_window.imageWidth=int(self.parser.images[0].width)
+        self.opengl_window.imageHeight=int(self.parser.images[0].height)
+        self.opengl_window.imageData=matrixDecomposition
+        self.opengl_window.paintGL()
 
 
 class GLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
         self.parent = parent
         QOpenGLWidget.__init__(self, parent)
+        self.imageWidth=0
+        self.imageHeight=0
+        self.imageData=[]
 
     def initializeGL(self):
         #self.qglClearColor(QtGui.QColor(0, 0, 255))    # initialize the screen to blue
@@ -125,4 +168,6 @@ class GLWidget(QOpenGLWidget):
         GL.glMatrixMode(GL.GL_MODELVIEW)
 
     def paintGL(self):
-	    GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+        GL.glDrawPixels(self.imageWidth, self.imageHeight, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, (GL.GLubyte * len(self.imageData))(*self.imageData))
+        self.update()
