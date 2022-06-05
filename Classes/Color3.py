@@ -1,8 +1,8 @@
 class Color3():
     def __init__(self, r, g, b):
-        self.r=r
-        self.g=g
-        self.b=b
+        self.r=float(r)
+        self.g=float(g)
+        self.b=float(b)
 
     def checkRange(self):
         # check less then 0

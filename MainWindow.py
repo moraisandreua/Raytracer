@@ -3,6 +3,7 @@ import sys
 from Classes.Color3 import Color3
 from Classes.Vector3 import Vector3
 from Classes.Ray import Ray
+from Classes.Hit import Hit
 from Parcing import Parcing
 import random
 
@@ -34,6 +35,7 @@ class MainWindow(QMainWindow):
         self.imageWidth=0
         self.pixelScale=0
         self.pixels=[]
+        self.counter=0
         
         layoutVertical = QVBoxLayout()
         self.opengl_window = GLWidget()
@@ -125,7 +127,8 @@ class MainWindow(QMainWindow):
                 # criar ray
                 ray = Ray(origin, directionNormalized)
                 rec=2 # recursividade
-                color = self.traceRay(ray, rec); 
+                color = self.traceRay(ray, rec);
+                print(color.r, color.g, color.b)
                 color.checkRange() #ajustar a cor
 
                 # converter para 32bit
@@ -133,10 +136,22 @@ class MainWindow(QMainWindow):
 
 
     def traceRay(self, ray, rec):
-        return Color3(0.4,0.5,0.6)
+        hit=Hit(0)
+
+        temp= [ y for x in self.parser.triangles for y in x.triangles ]
+        temp.extend(self.parser.spheres)
+        temp.extend(self.parser.boxes)
+
+        for object in temp:
+            object.intersect(ray, hit)
+        
+        if hit.found:
+            return hit.material.color
+        else:
+            return Color3(0.4,0.5,0.6)
 
     def showFinalImage(self):
-        arrayOfArrays=[ [x.r, x.g, x.b] for y in self.pixels for x in y ]
+        arrayOfArrays=[ [int(x.r), int(x.g), int(x.b)] for y in self.pixels for x in y ]
         matrixDecomposition = [item for sublist in arrayOfArrays for item in sublist]
         print("will now paint the pixels")
         self.opengl_window.imageWidth=int(self.parser.images[0].width)

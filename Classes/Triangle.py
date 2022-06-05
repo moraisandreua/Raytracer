@@ -23,7 +23,7 @@ class Triangle():
         size=math.sqrt(math.pow(newX, 2) + math.pow(newY, 2) + math.pow(newZ, 2))
         return Vector3(newX/size, newY/size, newZ/size)
 
-    def intersect(self, ray):
+    def intersect(self, ray, hit):
         v0=[self.vertexA.x, self.vertexA.y, self.vertexA.z]
         v1=[self.vertexB.x, self.vertexB.y, self.vertexB.z]
         v2=[self.vertexC.x, self.vertexC.y, self.vertexC.z]
@@ -42,7 +42,7 @@ class Triangle():
         #   check if ray and plane are parallel ?
         NdotRayDirection = np.dot(N, [ray.direction.x, ray.direction.y, ray.direction.z])
 
-        if (math.abs(NdotRayDirection) < sys.float_info.epsilon):  # o segundo parametro é almost 0, porque correpsponde a epsilon
+        if (abs(NdotRayDirection) < sys.float_info.epsilon):  # o segundo parametro é almost 0, porque correpsponde a epsilon
             return False;  # they are parallel so they don't intersect ! 
     
         #   compute d parameter using equation 2
@@ -55,7 +55,10 @@ class Triangle():
         if (t < 0): return False;  #the triangle is behind 
     
         #   compute the intersection point using equation 1
-        P = np.sum([ray.origin.x, ray.origin.y, ray.origin.z], np.multiply(t, [ray.direction.x, ray.direction.y, ray.direction.z]))
+        
+        rayOrigin=np.array([ray.origin.x, ray.origin.y, ray.origin.z])
+        rayDirection=t*np.array([ray.direction.x, ray.direction.y, ray.direction.z])
+        P = [rayOrigin[0] + rayDirection[0], rayOrigin[1] + rayDirection[1], rayOrigin[2] + rayDirection[2]]
 
         # Step 2: inside-outside test
         C = None; # vector perpendicular to triangle's plane 
@@ -77,12 +80,12 @@ class Triangle():
         edge2 = np.subtract(v0, v2); 
         vp2 = np.subtract(P, v2); 
         C = np.cross(edge2,vp2); 
-        if (np.dot(N,C) < 0): return False;  # P is on the right side; 
+        if (np.dot(N, C) < 0): return False  #P is on the right side
 
-        if (np.dot(ray.direction, hit.normal) < (-1)*sys.float_info.epsilon): return False
+        # if (np.dot([ray.direction.x, ray.direction.y, ray.direction.z], hit.normal) < (-1)*sys.float_info.epsilon): return False
         
-        hit=Hit(t)
         hit.point = Vector3(P[0], P[1], P[2])
+        hit.tDistance=t
 
         #ObjCoordToWorldCoord(ray, hit);
 

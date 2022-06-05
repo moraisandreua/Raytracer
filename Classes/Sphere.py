@@ -9,9 +9,11 @@ class Sphere():
         self.transformation=transformation
         self.material=material
 
-    def intersect(self, ray):
-        t0, t1=None  # solutions for t if the ray intersects 
-        
+    def intersect(self, ray, hit):
+        # solutions for t if the ray intersects 
+        t0=None  
+        t1=None
+
         #if 0 
         # geometric solution
         L = np.subtract([0,0,0], [ray.origin.x, ray.origin.y, ray.origin.z])
@@ -42,11 +44,14 @@ class Sphere():
         if (t < sys.float_info.epsilon):
             return False
         
-        # ponto de internção
-        L = Vector3(ray.origin.X + ray.direction.X * t, ray.origin.Y + ray.direction.Y * t, ray.origin.Z + ray.direction.Z * t)
+        # ponto de interseção
+        rayOrigin=[ray.origin.x, ray.origin.y, ray.origin.z]
+        rayDirection=[ray.direction.x, ray.direction.y, ray.direction.z]
+        L = Vector3(rayOrigin[0] + rayDirection[0] * t, rayOrigin[1] + rayDirection[1] * t, rayOrigin[2] + rayDirection[2] * t)
 
-        hit = Hit(t)
         hit.point=L
+        hit.tDistance=t
+
         if (hit.tDistance > sys.float_info.epsilon and hit.tDistance < hit.tMin):        
             hit.tMin = hit.tDistance
             hit.found = True

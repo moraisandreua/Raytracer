@@ -3,12 +3,12 @@ import sys
 
 class Hit():
     def __init__(self, t):
-        found=False
-        material=None
-        point=None # ponto de interceção
-        normal=None
-        tDistance=t
-        tMin=sys.float_info.max
+        self.found=False
+        self.material=None
+        self.point=None # ponto de interceção
+        self.normal=None
+        self.tDistance=t
+        self.tMin=sys.float_info.max
 
     def getT(self):
         return self.tDistance
@@ -20,5 +20,6 @@ class Hit():
         self.normal=normal
         self.tDistance=tDistance
         self.tMin=tMin
+
     
 

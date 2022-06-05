@@ -10,8 +10,7 @@ class Box():
         self.material=material
         self.bounds=[Vector3(-0.5, -0.5, -0.5), Vector3(0.5,0.5,0.5)]
 
-    def intersect(self, ray):
-        txmin, txmax, tymin, tymax, tzmin, tzmax = None
+    def intersect(self, ray, hit):
 
         txmin = (self.bounds[ray.sign[0]].x - ray.origin.x) * ray.invdir.x; 
         txmax = (self.bounds[1-ray.sign[0]].x - ray.origin.x) * ray.invdir.x; 
@@ -38,8 +37,8 @@ class Box():
         vectorOriginPoint = [txmin - ray.origin.x, tymin - ray.origin.y, tzmin - ray.origin.z]
         distancia = math.sqrt( math.pow(vectorOriginPoint[0], 2)+math.pow(vectorOriginPoint[1], 2)+math.pow(vectorOriginPoint[2], 2) )
     
-        hit=Hit(distancia)
         hit.point=intersectionPoint
+        hit.tDistance=distancia
 
         if (hit.tDistance > sys.float_info.epsilon and hit.tDistance < hit.tMin):        
             hit.tMin = hit.tDistance
