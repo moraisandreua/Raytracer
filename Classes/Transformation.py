@@ -10,7 +10,7 @@ class Transformation():
         self.sy=sy
         self.sz=sz
 
-    def matrix(self):
+    """def matrix(self):
         retorno={"translation":[], "rotation":[], "scale":[]}
 
         translation=[
@@ -34,4 +34,4 @@ class Transformation():
         retorno["rotation"]=rotation
         retorno["scale"]=scale
 
-        return retorno
+        return retorno"""

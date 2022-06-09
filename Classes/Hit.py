@@ -13,6 +13,9 @@ class Hit():
     def getT(self):
         return self.tDistance
 
+    def setT(self):
+        pass
+
     def setAttr(self, found, material, point, normal, tDistance, tMin):
         self.found=found
         self.material=material

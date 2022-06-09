@@ -108,6 +108,9 @@ class MainWindow(QMainWindow):
             self.pixels.append(newRow)
 
 
+    def showPercentage(self, i,j):
+        mult=i*j
+
     def traceRays(self):
         origin=Vector3(0,0,self.parser.camera.distance)
 
@@ -127,9 +130,11 @@ class MainWindow(QMainWindow):
                 # criar ray
                 ray = Ray(origin, directionNormalized)
                 rec=2 # recursividade
-                color = self.traceRay(ray, rec);
-                print(color.r, color.g, color.b)
+                color = self.traceRay(ray, rec)
                 color.checkRange() #ajustar a cor
+
+                #mostrar percentagem atual
+                self.showPercentage(i,j)
 
                 # converter para 32bit
                 self.pixels[i][j] = Color3(int(255.0 * color.r), int(255.0 * color.g), int(255.0 * color.b))
@@ -148,7 +153,7 @@ class MainWindow(QMainWindow):
         if hit.found:
             return hit.material.color
         else:
-            return Color3(0.4,0.5,0.6)
+            return Color3(0.2,0.2,0.2)
 
     def showFinalImage(self):
         arrayOfArrays=[ [int(x.r), int(x.g), int(x.b)] for y in self.pixels for x in y ]
