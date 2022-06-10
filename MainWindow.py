@@ -143,12 +143,19 @@ class MainWindow(QMainWindow):
     def traceRay(self, ray, rec):
         hit=Hit(0)
 
-        temp= [ y for x in self.parser.triangles for y in x.triangles ]
+        temp=[] #[ y for x in self.parser.triangles for y in x.triangles ]
         temp.extend(self.parser.spheres)
         temp.extend(self.parser.boxes)
 
         for object in temp:
             object.intersect(ray, hit)
+
+            tempTransform = object.super.transformation
+
+            # se for encontrado um ponto de interseção
+            if hit.found and tempTransform!=None:
+                finalPoint = tempTransform.transform(hit.point)
+                hit.point=finalPoint
         
         if hit.found:
             return hit.material.color

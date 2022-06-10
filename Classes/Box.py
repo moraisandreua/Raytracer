@@ -6,6 +6,8 @@ import sys
 
 class Box():
     def __init__(self, transformation, material):
+        self.super=self # é necessário para normalizar o objeto com os triangulos
+
         self.transformation=transformation
         self.material=material
         self.bounds=[Vector3(-0.5, -0.5, -0.5), Vector3(0.5,0.5,0.5)]

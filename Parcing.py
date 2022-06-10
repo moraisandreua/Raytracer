@@ -71,33 +71,27 @@ class Parcing():
                 "\r\n")[0])], self.materials[int(properties.split("\r\n")[1])]))
 
         if prefix == "Transformation":
+            tempTransform=Transformation()
             linhas = properties.split("\r\n")
-            t = [None, None, None]
-            r = [None, None, None]
-            s = [None, None, None]
             for l in linhas:
                 a = l.split(" ")
                 if a[0] == "T":
-                    t[0] = a[1]
-                    t[1] = a[2]
-                    t[2] = a[3]
+                    tempTransform.translate(float(a[1]), float(a[2]), float(a[3]))
 
                 if a[0] == "S":
-                    s[0] = a[1]
-                    s[1] = a[2]
-                    s[2] = a[3]
+                    tempTransform.scale(float(a[1]), float(a[2]), float(a[3]))
 
                 if a[0] == "Rx":
-                    r[0] = a[1]
+                    tempTransform.rotateX(float(a[1]))
 
                 if a[0] == "Ry":
-                    r[1] = a[1]
+                    tempTransform.rotateY(float(a[1]))
 
                 if a[0] == "Rz":
-                    r[2] = a[1]
+                    tempTransform.rotateZ(float(a[1]))
 
-            self.transformations.append(Transformation(
-                t[0], t[1], t[2], r[0], r[1], r[2], s[0], s[1], s[2]))
+            
+            self.transformations.append(tempTransform)
 
         if prefix == "Triangles":
             count = 0
@@ -117,6 +111,6 @@ class Parcing():
 
                 if count % 4 == 3:
                     self.triangles[-1].triangles += [Triangle(
-                        currentMaterial, currentVectors[0], currentVectors[1], currentVectors[2])]
+                        currentMaterial, currentVectors[0], currentVectors[1], currentVectors[2], self.triangles[-1])]
 
                 count += 1

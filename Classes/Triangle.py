@@ -5,7 +5,9 @@ import sys
 import math
 
 class Triangle():
-    def __init__(self, material, vertexA, vertexB, vertexC):
+    def __init__(self, material, vertexA, vertexB, vertexC, super=None):
+        self.super=super # conjunto dos triangulos: donut, plano do chão, piramide...
+
         self.material=material
         self.vertexA=vertexA
         self.vertexB=vertexB
