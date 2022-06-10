@@ -61,77 +61,58 @@ class TransformHelper():
 
         self.multiply3(translateMatrix)
 
-    """
-
-    private double[,] Minor(double[,] matrix, int row, int column)
-    {
-        double[,] minor = new double[matrix.GetLength(0) - 1, matrix.GetLength(0) - 1];
-
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            for (int j = 0; i != row && j < matrix.GetLength(1); j++)
-            {
-                if (j != column)
-                {
-                    minor[i < row ? i : i - 1, j < column ? j : j - 1] = matrix[i, j];
-                }
-            }
-        }
-        return minor;
-    }
-
-    private double Determinant(double[,] matrix)
-    {
-        if (matrix.GetLength(0) == 2)
-        {
-            return matrix[0,0] * matrix[1,1] - matrix[0,1] * matrix[1,0];
-        }
-
-        double determinant = 0;
-        for (int i = 0; i < matrix.GetLength(1); i++)
-        {
-            determinant += Math.Pow(-1, i) * matrix[0,i]
-                    * Determinant(Minor(matrix, 0, i));
-        }
-        return determinant;
-    }
     
-    def InverseMatrix():
-        inverseMatrix = [];
 
-        // minors and cofactors
-        for j in range(0, len(transformMatrix)): # corresponde às linhas
-            for i in range(0, len(transformMatrix[0])): # corresponde Às celulas de cada linha
-                inverseMatrix[j][i] = math.pow(-1, i + j) * Determinant(Minor(transformMatrix, i, j));
-        for (int i = 0; i < transformMatrix.GetLength(0); i++)
-        {
-            for (int j = 0; j < transformMatrix.GetLength(1); j++)
-            {
-                inverseMatrix[i,j] = Math.Pow(-1, i + j)
-                        * Determinant(Minor(transformMatrix, i, j));
-            }
-        }
+    def Minor(self, matrix, row, column):
+        minor = [ [] for x in range(0, len(matrix[0])-1) ] # width=comprimento de matrix - 1
 
-        // adjugate and determinant
-        double det = 1.0 / Determinant(transformMatrix);
-        for (int i = 0; i < inverseMatrix.GetLength(0); i++)
-        {
-            for (int j = 0; j <= i; j++)
-            {
-                double temp = inverseMatrix[i,j];
-                inverseMatrix[i,j] = inverseMatrix[j,i] * det;
-                inverseMatrix[j,i] = temp * det;
-            }
-        }
+        for i in range(0,len(matrix[0])):
+            for j in range(0, len(matrix)):
+                if (j != column):
+                    index0 = i if i < row else i - 1
+                    index1 = j if j < column else j - 1
+                    minor[index0][index1] = matrix[i][j]
+                
+        return minor
 
-    public void TransposeMatrix()
-    {
-        transposeMatrix = new double[inverseMatrix.GetLength(0), inverseMatrix.GetLength(1)];
+    def Determinant(self, matrix):
+        if len(matrix[0]) == 2:
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
 
-        for (int i = 0; i < inverseMatrix.GetLength(0); i++)
-            for (int j = 0; j < inverseMatrix.GetLength(1); j++)
-                transposeMatrix[j, i] = inverseMatrix[i, j];
-    }"""          
+        determinant = 0
+        for i in range(0, len(matrix)):
+            determinant += math.pow(-1, i) * matrix[0][i] * self.Determinant(self.Minor(matrix, 0, i))
+        
+        return determinant
+
+    
+    def InverseMatrix(self):
+        inverseMatrix = []
+
+        # minors and cofactors
+        for j in range(0, len(self.transformMatrix)): # corresponde às linhas
+            for i in range(0, len(self.transformMatrix[0])): # corresponde Às celulas de cada linha
+                inverseMatrix[j][i] = math.pow(-1, i + j) * self.Determinant(self.Minor(self.transformMatrix, i, j))
+        
+        for i in range(0, len(self.transformMatrix[0])):
+            for j in range(0, len(self.transformMatrix)):
+                self.inverseMatrix[i][j] = math.pow(-1, i + j) * self.Determinant(self.Minor(self.transformMatrix, i, j))
+        
+
+        # adjugate and determinant
+        det = 1.0 / self.Determinant(self.transformMatrix)
+        for i in range(0, len(self.inverseMatrix[0])):
+            for j in range(0, i+1):
+                temp = inverseMatrix[i][j]
+                inverseMatrix[i][j] = inverseMatrix[j][i] * det
+                inverseMatrix[j][i] = temp * det
+
+    def TransposeMatrix(self):
+        self.transposeMatrix = [ [] for i in range(0, len(self.inverseMatrix))]
+
+        for i in range(0, len(self.inverseMatrix[0])):
+            for j in range(0, len(self.inverseMatrix)):
+                self.transposeMatrix[j][i] = self.inverseMatrix[i][j]
 
     def rotateX(self, a):
         rotateXMatrix = [[],[],[],[]]
