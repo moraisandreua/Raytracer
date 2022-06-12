@@ -136,90 +136,33 @@ class Transformation():
 
         a *= math.pi / 180.0
 
-        rotateXMatrix[0][0] = 1.0
-        rotateXMatrix[0][1] = 0.0
-        rotateXMatrix[0][2] = 0.0
-        rotateXMatrix[0][3] = 0.0
-        rotateXMatrix[1][0] = 0.0
-        rotateXMatrix[1][1] = math.cos(a)
-        rotateXMatrix[1][2] = -math.sin(a)
-        rotateXMatrix[1][3] = 0.0
-        rotateXMatrix[2][0] = 0.0
-        rotateXMatrix[2][1] = math.sin(a)
-        rotateXMatrix[2][2] = math.cos(a)
-        rotateXMatrix[2][3] = 0.0
-        rotateXMatrix[3][0] = 0.0
-        rotateXMatrix[3][1] = 0.0
-        rotateXMatrix[3][2] = 0.0
-        rotateXMatrix[3][3] = 1.0
+        rotateXMatrix=[ [1, 0, 0, 0], [0, math.cos(a), -math.sin(a), 0], [0, math.sin(a), math.cos(a), 0], [0, 0, 0, 1]]
 
         self.multiply3(rotateXMatrix)
 
     def rotateY(self, a):
         rotateYMatrix = [[None, None, None, None] for i in range(0, 4)]
 
+        # converter para modelo 360º
         a *= math.pi / 180.0
-        rotateYMatrix[0][0] = math.cos(a)
-        rotateYMatrix[0][1] = 0.0
-        rotateYMatrix[0][2] = math.sin(a)
-        rotateYMatrix[0][3] = 0.0
-        rotateYMatrix[1][0] = 0.0
-        rotateYMatrix[1][1] = 1.0
-        rotateYMatrix[1][2] = 0.0
-        rotateYMatrix[1][3] = 0.0
-        rotateYMatrix[2][0] = -math.sin(a)
-        rotateYMatrix[2][1] = 0.0
-        rotateYMatrix[2][2] = math.cos(a)
-        rotateYMatrix[2][3] = 0.0
-        rotateYMatrix[3][0] = 0.0
-        rotateYMatrix[3][1] = 0.0
-        rotateYMatrix[3][2] = 0.0
-        rotateYMatrix[3][3] = 1.0
 
+        rotateYMatrix = [[math.cos(a), 0, math.sin(a), 0], [0, 1, 0, 0], [-math.sin(a), 0, math.cos(a), 0], [0, 0, 0, 1]]
+        
         self.multiply3(rotateYMatrix)
 
     def rotateZ(self, a):
         rotateZMatrix = [[None, None, None, None] for i in range(0, 4)]
 
         a *= math.pi / 180.0
-        rotateZMatrix[0][0] = math.cos(a)
-        rotateZMatrix[0][1] = -math.sin(a)
-        rotateZMatrix[0][2] = 0.0
-        rotateZMatrix[0][3] = 0.0
-        rotateZMatrix[1][0] = math.sin(a)
-        rotateZMatrix[1][1] = math.cos(a)
-        rotateZMatrix[1][2] = 0.0
-        rotateZMatrix[1][3] = 0.0
-        rotateZMatrix[2][0] = 0.0
-        rotateZMatrix[2][1] = 0.0
-        rotateZMatrix[2][2] = 1.0
-        rotateZMatrix[2][3] = 0.0
-        rotateZMatrix[3][0] = 0.0
-        rotateZMatrix[3][1] = 0.0
-        rotateZMatrix[3][2] = 0.0
-        rotateZMatrix[3][3] = 1.0
+
+        rotateZMatrix = [[ math.cos(a), -math.sin(a), 0, 0],[math.sin(a), math.cos(a), 0, 0],[0, 0, 1 ,0],[0, 0, 0, 1]]
 
         self.multiply3(rotateZMatrix)
 
     def scale(self, x, y, z):
         scaleMatrix = [[None, None, None, None] for i in range(0, 4)]
 
-        scaleMatrix[0][0] = x
-        scaleMatrix[0][1] = 0.0
-        scaleMatrix[0][2] = 0.0
-        scaleMatrix[0][3] = 0.0
-        scaleMatrix[1][0] = 0.0
-        scaleMatrix[1][1] = y
-        scaleMatrix[1][2] = 0.0
-        scaleMatrix[1][3] = 0.0
-        scaleMatrix[2][0] = 0.0
-        scaleMatrix[2][1] = 0.0
-        scaleMatrix[2][2] = z
-        scaleMatrix[2][3] = 0.0
-        scaleMatrix[3][0] = 0.0
-        scaleMatrix[3][1] = 0.0
-        scaleMatrix[3][2] = 0.0
-        scaleMatrix[3][3] = 1.0
+        scaleMatrix=[[x, 0, 0, 0], [0, y, 0, 0], [0, 0, z, 0], [0, 0, 0, 1]]
 
         self.multiply3(scaleMatrix)
 

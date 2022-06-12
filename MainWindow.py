@@ -1,4 +1,5 @@
 from array import array
+from logging import NullHandler
 import sys
 from Classes.Color3 import Color3
 from Classes.Vector3 import Vector3
@@ -35,7 +36,7 @@ class MainWindow(QMainWindow):
         self.imageWidth=0
         self.pixelScale=0
         self.pixels=[]
-        self.counter=0
+        self.itt=0 # contagem de iterações no traceray
         
         layoutVertical = QVBoxLayout()
         self.opengl_window = GLWidget()
@@ -113,8 +114,8 @@ class MainWindow(QMainWindow):
 
 
     def showPercentage(self, i,j):
-        mult=i*j
-        percentage = round(mult/(40000) * 100, 1)
+        self.itt+=1
+        percentage = round(self.itt/40000 * 100, 0)
         #print(percentage, "%")
         self.prog_bar.setValue(percentage)
 
@@ -152,7 +153,7 @@ class MainWindow(QMainWindow):
     def traceRay(self, ray, rec):
         hit=Hit(0)
 
-        temp=[] #[ y for x in self.parser.triangles for y in x.triangles ]
+        temp=[ y for x in self.parser.triangles for y in x.triangles ]
         temp.extend(self.parser.spheres)
         temp.extend(self.parser.boxes)
 
@@ -171,8 +172,7 @@ class MainWindow(QMainWindow):
 
             # se for encontrado um ponto de interseção
             if hit.found and tempTransform!=None:
-                finalPoint = tempTransform.transform(hit.point)
-                hit.point=finalPoint
+                pass
         
         if hit.found:
             return hit.material.color
