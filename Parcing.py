@@ -45,6 +45,7 @@ class Parcing():
                 confBlock = content[startPos:endPos].replace("\t", "").strip()
                 self.parseObject(prefix, confBlock)
 
+
     def parseObject(self, prefix, properties):
         if prefix == "mage":
             self.images.append(Image(float(properties.split("\r\n")[0].split(" ")[0]), float(properties.split("\r\n")[0].split(" ")[1]), Color3(
@@ -90,7 +91,6 @@ class Parcing():
                 if a[0] == "Rz":
                     tempTransform.rotateZ(float(a[1]))
 
-            
             self.transformations.append(tempTransform)
 
         if prefix == "Triangles":

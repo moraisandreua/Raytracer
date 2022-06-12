@@ -15,7 +15,7 @@ import OpenGL.GLU as GLU
 
 from PyQt6.QtCore import QSize, Qt, pyqtSignal
 from PyQt6.QtOpenGL import QOpenGLWindow
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QSlider, QLabel, QFileDialog
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QSlider, QLabel, QFileDialog, QProgressBar
 from PyQt6.QtOpenGLWidgets import QOpenGLWidget
 from PyQt6 import QtGui
 
@@ -58,9 +58,13 @@ class MainWindow(QMainWindow):
         layoutHorizontal.addWidget(loadButton)
         layoutHorizontal.addWidget(startButton)
         layoutHorizontal.addLayout(sliderLabelLayoutHorizontal)
+
+        self.prog_bar = QProgressBar(self)
+        self.prog_bar.setValue(0)
         
         layoutVertical.addWidget(self.opengl_window)
         layoutVertical.addLayout(layoutHorizontal)
+        layoutVertical.addWidget(self.prog_bar)
 
         # Set the central widget of the Window.
         widget = QWidget()
@@ -110,6 +114,9 @@ class MainWindow(QMainWindow):
 
     def showPercentage(self, i,j):
         mult=i*j
+        percentage = round(mult/(40000) * 100, 1)
+        #print(percentage, "%")
+        self.prog_bar.setValue(percentage)
 
     def traceRays(self):
         origin=Vector3(0,0,self.parser.camera.distance)
@@ -139,6 +146,8 @@ class MainWindow(QMainWindow):
                 # converter para 32bit
                 self.pixels[i][j] = Color3(int(255.0 * color.r), int(255.0 * color.g), int(255.0 * color.b))
 
+        print("end tracing")
+
 
     def traceRay(self, ray, rec):
         hit=Hit(0)
@@ -147,10 +156,18 @@ class MainWindow(QMainWindow):
         temp.extend(self.parser.spheres)
         temp.extend(self.parser.boxes)
 
+        last=self.parser.spheres[0]
         for object in temp:
-            object.intersect(ray, hit)
-
+            # trasformação de um objeto. tem de ser feito .super porque no caso dos triangulos, o donut é uma classe Triangles com vários triangulos lá dentro
             tempTransform = object.super.transformation
+            tempTransform.MultiplyTransform(self.parser.camera.tranformation.transformMatrix)
+            tempTransform.InverseMatrix()
+            tempTransform.TransposeMatrix()
+            
+            # ray transformado com base no transform aplicado ao object + transform aplicada à camara
+            transformedRay = tempTransform.inverse(ray)
+
+            object.intersect(transformedRay, hit)
 
             # se for encontrado um ponto de interseção
             if hit.found and tempTransform!=None:

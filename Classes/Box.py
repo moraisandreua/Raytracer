@@ -13,7 +13,7 @@ class Box():
         self.bounds=[Vector3(-0.5, -0.5, -0.5), Vector3(0.5,0.5,0.5)]
 
     def intersect(self, ray, hit):
-
+        
         txmin = (self.bounds[ray.sign[0]].x - ray.origin.x) * ray.invdir.x; 
         txmax = (self.bounds[1-ray.sign[0]].x - ray.origin.x) * ray.invdir.x; 
         tymin = (self.bounds[ray.sign[1]].y - ray.origin.y) * ray.invdir.y; 
