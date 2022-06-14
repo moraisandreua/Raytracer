@@ -121,6 +121,7 @@ class MainWindow(QMainWindow):
 
     def traceRays(self):
         origin=Vector3(0,0,self.parser.camera.distance)
+        intersecoes=[]
 
         # percorre as linhas (y)
         for j in range(0, int(self.parser.images[0].height)):
@@ -138,14 +139,24 @@ class MainWindow(QMainWindow):
                 # criar ray
                 ray = Ray(origin, directionNormalized)
                 rec=2 # recursividade
-                color = self.traceRay(ray, rec)
-                color.checkRange() #ajustar a cor
+                inter = self.traceRay(ray, rec)
+                inter[0].checkRange() #ajustar a cor
+                inter.append(i)
+                inter.append(j)
+                intersecoes.append(inter) # adicionar a uma lista de interseções para mais tarde ordena-los
 
                 #mostrar percentagem atual
                 self.showPercentage(i,j)
 
-                # converter para 32bit
-                self.pixels[i][j] = Color3(int(255.0 * color.r), int(255.0 * color.g), int(255.0 * color.b))
+        print("começa a ordenação de interseções")
+        intersecoes = sorted(intersecoes, key=lambda x:x[1], reverse=False)
+        print(intersecoes)
+        for inter in intersecoes:
+            # converter para 32bit
+            i=inter[2]
+            j=inter[3]
+            color=inter[0]
+            self.pixels[i][j] = Color3(int(255.0 * color.r), int(255.0 * color.g), int(255.0 * color.b))
 
         print("end tracing")
 
@@ -157,13 +168,9 @@ class MainWindow(QMainWindow):
         temp.extend(self.parser.spheres)
         temp.extend(self.parser.boxes)
 
-        last=self.parser.spheres[0]
         for object in temp:
             # trasformação de um objeto. tem de ser feito .super porque no caso dos triangulos, o donut é uma classe Triangles com vários triangulos lá dentro
             tempTransform = object.super.transformation
-            tempTransform.MultiplyTransform(self.parser.camera.tranformation.transformMatrix)
-            tempTransform.InverseMatrix()
-            tempTransform.TransposeMatrix()
             
             # ray transformado com base no transform aplicado ao object + transform aplicada à camara
             transformedRay = tempTransform.inverse(ray)
@@ -172,12 +179,13 @@ class MainWindow(QMainWindow):
 
             # se for encontrado um ponto de interseção
             if hit.found and tempTransform!=None:
+                print("ola, encontrei a esfera")
                 pass
         
         if hit.found:
-            return hit.material.color
+            return [hit.material.color, hit.tDistance]
         else:
-            return Color3(0.2,0.2,0.2)
+            return [Color3(0.2,0.2,0.2), sys.float_info.max]
 
     def showFinalImage(self):
         arrayOfArrays=[ [int(x.r), int(x.g), int(x.b)] for y in self.pixels for x in y ]

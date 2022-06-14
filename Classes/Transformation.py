@@ -18,8 +18,6 @@ class Transformation():
 
         for i in range(0, 4):
             b[i] = 0
-
-        for i in range(0, 4):
             for j in range(0, 4):
                 b[i] += self.transformMatrix[i][j] * a[j]
 
@@ -48,12 +46,11 @@ class Transformation():
                     self.transformMatrix[i][j] += b[i][k] * a[k][j]
 
     def multiply4(self, pointA, pointB):
-        for i in range(0, 4):
-            pointB[i] = 0
 
         for i in range(0, 4):
+            pointB[i] = 0
             for j in range(0, 4):
-                pointB[i] += self.transposeMatrix[i, j] * pointA[j]
+                pointB[i] += self.transposeMatrix[i][j] * pointA[j]
 
         return pointB
 
@@ -62,13 +59,8 @@ class Transformation():
         if self.transformedWithCameraMatrix != [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]:
             return None
 
-        matrixB = [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-
-        for i in range(0,4):
-            for j in range(0,4):
-                matrixB[i][j] = self.transformMatrix[i][j]
-                # zerar a matriz
-                self.transformedWithCameraMatrix[i][j] = 0
+        matrixB = np.copy(self.transformMatrix)
+        self.transformedWithCameraMatrix = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
 
         for i in range(0, 4):
             for j in range(0, 4):
@@ -183,7 +175,7 @@ class Transformation():
         arrA = [ray.direction.x, ray.direction.y, ray.direction.z, 0] # w=0 porque a direção é um vetor
         directionInverse = self.multiply2(arrA, [None, None, None, None])
 
-        directionConverted = Vector3(directionInverse[0], directionInverse[1], directionInverse[2])
+        directionConverted = Vector3(directionInverse[0], directionInverse[1], directionInverse[2]).normal()
 
         return Ray(originConverted, directionConverted)
 

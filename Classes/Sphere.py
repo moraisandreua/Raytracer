@@ -21,7 +21,6 @@ class Sphere():
         L = np.subtract([0,0,0], [ray.origin.x, ray.origin.y, ray.origin.z])
 
         tca = np.dot(L, [ray.direction.x, ray.direction.y, ray.direction.z]); 
-        
         d2 = np.dot(L, L) - tca * tca; 
 
         if (d2 > 1): return False; 
@@ -29,12 +28,10 @@ class Sphere():
         thc = math.sqrt(1 - d2); # thc: por favor enrola esse
 
         t0 = tca - thc
-
         t1 = tca + thc
  
         if(t0 > t1): t0,t1=[t1, t0]
         
-
         if(t0 < sys.float_info.epsilon):
             t0 = t1
 

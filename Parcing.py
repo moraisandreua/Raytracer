@@ -45,6 +45,13 @@ class Parcing():
                 confBlock = content[startPos:endPos].replace("\t", "").strip()
                 self.parseObject(prefix, confBlock)
 
+        # multiplicar transformações pela da camara
+        for t in self.transformations:
+            if t!=self.camera.tranformation:
+                t.MultiplyTransform(self.camera.tranformation.transformMatrix)
+                t.InverseMatrix()
+                t.TransposeMatrix()
+
 
     def parseObject(self, prefix, properties):
         if prefix == "mage":
