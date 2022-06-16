@@ -55,6 +55,7 @@ class Sphere():
             hit.tMin = hit.tDistance
             hit.found = True
             hit.material = self.material
+            hit.normal=L.normal()
 
 
         return True

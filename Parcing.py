@@ -47,6 +47,7 @@ class Parcing():
 
         # multiplicar transformações pela da camara
         for t in self.transformations:
+            
             if t!=self.camera.tranformation:
                 t.MultiplyTransform(self.camera.tranformation.transformMatrix)
                 t.InverseMatrix()

@@ -39,13 +39,34 @@ class Box():
         vectorOriginPoint = [txmin - ray.origin.x, tymin - ray.origin.y, tzmin - ray.origin.z]
         distancia = math.sqrt( math.pow(vectorOriginPoint[0], 2)+math.pow(vectorOriginPoint[1], 2)+math.pow(vectorOriginPoint[2], 2) )
     
-        hit.point=intersectionPoint
-        hit.tDistance=distancia
-
-        if (hit.tDistance > sys.float_info.epsilon and hit.tDistance < hit.tMin):        
+        
+        if (distancia > sys.float_info.epsilon and distancia < hit.tMin):
+            hit.point=intersectionPoint
+            hit.tDistance=distancia
+        
             hit.tMin = hit.tDistance
             hit.found = True
             hit.material = self.material
+            
+            hit.normal=Vector3(0,0,0)
+
+            minValue=sys.float_info.max
+
+            distanceX =  abs(self.bounds[1].x - abs(intersectionPoint.x))
+            if distanceX < minValue : 
+                minValue=distanceX
+                hit.normal=Vector3(1,0,0)
+
+            distanceY =  abs(self.bounds[1].y - abs(intersectionPoint.y))
+            if distanceY < minValue : 
+                minValue=distanceY
+                hit.normal=Vector3(0,1,0)
+
+            distanceZ =  abs(self.bounds[1].z - abs(intersectionPoint.z))
+            if distanceZ < minValue : 
+                minValue=distanceZ
+                hit.normal=Vector3(0,0,1)
+
 
         return True
         

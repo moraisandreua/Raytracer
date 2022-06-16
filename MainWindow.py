@@ -116,7 +116,6 @@ class MainWindow(QMainWindow):
     def showPercentage(self, i,j):
         self.itt+=1
         percentage = round(self.itt/40000 * 100, 0)
-        #print(percentage, "%")
         self.prog_bar.setValue(percentage)
 
     def traceRays(self):
@@ -149,8 +148,8 @@ class MainWindow(QMainWindow):
                 self.showPercentage(i,j)
 
         print("começa a ordenação de interseções")
-        intersecoes = sorted(intersecoes, key=lambda x:x[1], reverse=False)
-        print(intersecoes)
+        intersecoes = sorted(intersecoes, key=lambda x:x[1], reverse=True)
+
         for inter in intersecoes:
             # converter para 32bit
             i=inter[2]
@@ -179,11 +178,19 @@ class MainWindow(QMainWindow):
 
             # se for encontrado um ponto de interseção
             if hit.found and tempTransform!=None:
-                print("ola, encontrei a esfera")
-                pass
+                newPoint = tempTransform.transform(hit.point)
+                hit.point = newPoint
+                hit.tDistance = ray.distance(newPoint)
+                hit.normal = tempTransform.transpose(hit.normal)
+
         
         if hit.found:
-            return [hit.material.color, hit.tDistance]
+            color = Color3(0,0,0)
+            for l in self.parser.lights:
+                color.r = color.r + (l.color.r * hit.material.color.r * hit.material.ambient)
+                color.g = color.g + (l.color.g * hit.material.color.g * hit.material.ambient)
+                color.b = color.b + (l.color.b * hit.material.color.b * hit.material.ambient)
+            return [color, hit.tDistance]
         else:
             return [Color3(0.2,0.2,0.2), sys.float_info.max]
 

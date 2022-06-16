@@ -56,11 +56,16 @@ class Triangle():
 
         distance = np.dot(v0v2, Q) * invertedDet
 
+        tempNormal=np.cross(v0v1, v0v2)
+        normal = Vector3(tempNormal[0], tempNormal[1], tempNormal[2])
+        intersectionPoint=[rayOrigin[0] + rayDirection[0]*distance, rayOrigin[1] + rayDirection[1]*distance, rayOrigin[2] + rayDirection[2]*distance]
+
         if(distance > epsilon):
-            hit.point=[rayOrigin[0] + rayDirection[0]*distance, rayOrigin[1] + rayDirection[1]*distance, rayOrigin[2] + rayDirection[2]*distance]
+            hit.point=Vector3(intersectionPoint[0], intersectionPoint[1], intersectionPoint[2])
             hit.tDistance=distance
             hit.tMin = hit.tDistance
             hit.found = True
             hit.material = self.material
+            hit.normal = normal.normal()
 
         return False

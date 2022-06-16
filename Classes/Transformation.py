@@ -19,7 +19,7 @@ class Transformation():
         for i in range(0, 4):
             b[i] = 0
             for j in range(0, 4):
-                b[i] += self.transformMatrix[i][j] * a[j]
+                b[i] += self.transformedWithCameraMatrix[i][j] * a[j]
 
         return b
 
@@ -126,9 +126,14 @@ class Transformation():
     def rotateX(self, a):
         rotateXMatrix = [[None, None, None, None] for i in range(0, 4)]
 
-        a *= math.pi / 180.0
+        # converter para modelo 360º
+        a *= math.pi / 180
 
-        rotateXMatrix=[ [1, 0, 0, 0], [0, math.cos(a), -math.sin(a), 0], [0, math.sin(a), math.cos(a), 0], [0, 0, 0, 1]]
+        rotateXMatrix=[ 
+            [1, 0, 0, 0], 
+            [0, math.cos(a), -math.sin(a), 0], 
+            [0, math.sin(a), math.cos(a), 0], 
+            [0, 0, 0, 1]]
 
         self.multiply3(rotateXMatrix)
 
@@ -136,18 +141,27 @@ class Transformation():
         rotateYMatrix = [[None, None, None, None] for i in range(0, 4)]
 
         # converter para modelo 360º
-        a *= math.pi / 180.0
+        a *= math.pi / 180
 
-        rotateYMatrix = [[math.cos(a), 0, math.sin(a), 0], [0, 1, 0, 0], [-math.sin(a), 0, math.cos(a), 0], [0, 0, 0, 1]]
+        rotateYMatrix = [
+            [math.cos(a), 0, math.sin(a), 0], 
+            [0, 1, 0, 0], 
+            [-math.sin(a), 0, math.cos(a), 0], 
+            [0, 0, 0, 1]]
         
         self.multiply3(rotateYMatrix)
 
     def rotateZ(self, a):
         rotateZMatrix = [[None, None, None, None] for i in range(0, 4)]
 
-        a *= math.pi / 180.0
+        # converter para modelo 360º
+        a *= math.pi / 180
 
-        rotateZMatrix = [[ math.cos(a), -math.sin(a), 0, 0],[math.sin(a), math.cos(a), 0, 0],[0, 0, 1 ,0],[0, 0, 0, 1]]
+        rotateZMatrix = [
+            [ math.cos(a), -math.sin(a), 0, 0],
+            [math.sin(a), math.cos(a), 0, 0],
+            [0, 0, 1 ,0],
+            [0, 0, 0, 1]]
 
         self.multiply3(rotateZMatrix)
 
@@ -181,7 +195,7 @@ class Transformation():
 
     def transpose(self, vector):
         pointA = [vector.x, vector.y, vector.z, 0] # como é um vetor, w=0
-        vectorInverted = self.multiply4(pointA, [None, None, None])
+        vectorInverted = self.multiply4(pointA, [None, None, None, None])
 
         transposeVector = Vector3(vectorInverted[0], vectorInverted[1], vectorInverted[2])
 
