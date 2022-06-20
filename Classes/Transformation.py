@@ -32,6 +32,7 @@ class Transformation():
                 
         return pointB
 
+    # PARA AS TRANSFORMAÇÕES COMPOSTAS
     def multiply3(self, a):
         b = [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
 
@@ -127,7 +128,7 @@ class Transformation():
         rotateXMatrix = [[None, None, None, None] for i in range(0, 4)]
 
         # converter para modelo 360º
-        a *= math.pi / 180
+        a = a * math.pi / 180
 
         rotateXMatrix=[ 
             [1, 0, 0, 0], 
@@ -141,7 +142,7 @@ class Transformation():
         rotateYMatrix = [[None, None, None, None] for i in range(0, 4)]
 
         # converter para modelo 360º
-        a *= math.pi / 180
+        a = a * math.pi / 180
 
         rotateYMatrix = [
             [math.cos(a), 0, math.sin(a), 0], 
@@ -155,7 +156,7 @@ class Transformation():
         rotateZMatrix = [[None, None, None, None] for i in range(0, 4)]
 
         # converter para modelo 360º
-        a *= math.pi / 180
+        a = a * math.pi / 180
 
         rotateZMatrix = [
             [ math.cos(a), -math.sin(a), 0, 0],

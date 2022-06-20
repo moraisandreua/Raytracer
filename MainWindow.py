@@ -171,6 +171,7 @@ class MainWindow(QMainWindow):
             # trasformação de um objeto. tem de ser feito .super porque no caso dos triangulos, o donut é uma classe Triangles com vários triangulos lá dentro
             tempTransform = object.super.transformation
             
+            
             # ray transformado com base no transform aplicado ao object + transform aplicada à camara
             transformedRay = tempTransform.inverse(ray)
 
@@ -184,26 +185,26 @@ class MainWindow(QMainWindow):
                 hit.normal = tempTransform.transpose(hit.normal)
 
         
-        if hit.found:
-            color = Color3(0,0,0)
-            for l in self.parser.lights:
-                color.r = color.r + (l.color.r * hit.material.color.r * hit.material.ambient)
-                color.g = color.g + (l.color.g * hit.material.color.g * hit.material.ambient)
-                color.b = color.b + (l.color.b * hit.material.color.b * hit.material.ambient)
+            if hit.found:
+                color = Color3(0,0,0)
+                for l in self.parser.lights:
+                    color.r = color.r + (l.color.r * hit.material.color.r * hit.material.ambient)
+                    color.g = color.g + (l.color.g * hit.material.color.g * hit.material.ambient)
+                    color.b = color.b + (l.color.b * hit.material.color.b * hit.material.ambient)
 
-                posLight=[ x[3] for x in l.transformation.transformMatrix ]
+                    posLight=[ x[3] for x in l.transformation.transformedWithCameraMatrix ]
 
-                vectorI = Vector3( posLight[0]-hit.point.x, posLight[1]-hit.point.y, posLight[2]-hit.point.z ).normal()
-                cosTheta = np.dot([hit.normal.x, hit.normal.y, hit.normal.z],[vectorI.x, vectorI.y, vectorI.z])
+                    vectorI = Vector3( posLight[0]-hit.point.x, posLight[1]-hit.point.y, posLight[2]-hit.point.z ).normal()
+                    cosTheta = np.dot([hit.normal.x, hit.normal.y, hit.normal.z],[vectorI.x, vectorI.y, vectorI.z])
 
-                if cosTheta > 0:
-                    color.r = color.r + (l.color.r * hit.material.color.r * hit.material.difuse * cosTheta)
-                    color.g = color.g + (l.color.g * hit.material.color.g * hit.material.difuse * cosTheta)
-                    color.b = color.b + (l.color.b * hit.material.color.b * hit.material.difuse * cosTheta)
+                    if cosTheta > 0:
+                        color.r = color.r + (l.color.r * hit.material.color.r * hit.material.difuse * cosTheta)
+                        color.g = color.g + (l.color.g * hit.material.color.g * hit.material.difuse * cosTheta)
+                        color.b = color.b + (l.color.b * hit.material.color.b * hit.material.difuse * cosTheta)
 
-            return [color, hit.tDistance]
-        else:
-            return [Color3(0.2,0.2,0.2), sys.float_info.max]
+                return [color, hit.tDistance]
+        
+        return [Color3(0.2,0.2,0.2), sys.float_info.max]
 
     def showFinalImage(self):
         arrayOfArrays=[ [int(x.r), int(x.g), int(x.b)] for y in self.pixels for x in y ]
