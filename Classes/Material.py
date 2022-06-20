@@ -3,7 +3,7 @@ class Material():
         self.color=color
         # coeficientes \/
         self.ambient=float(ambient) # reflexão ambiente
-        self.difuse=difuse
+        self.difuse=float(difuse)
         self.especular=especular
         self.refraction=refraction
         self.refraction_index=refraction_index
